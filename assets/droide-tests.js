@@ -1,10 +1,9 @@
 (function ( $ ) {
 
-
- 
     $.fn.DroideTests = function() {
 
-    	var atributos = {};
+		atributos = {seletor:''};
+		
     	var $css = 'position:absolute; bottom:0; left:0; width:100%;background:rgba(169, 68, 66,0.5); color:#fff;';
 
     	var $styleElement = "<style type='text/css'>";
@@ -90,9 +89,10 @@
 
 				if(typeof elemento.attr('id') != 'undefined')
 				{
+				
 					this.atributos.seletor = '#'+elemento.attr('id');
 				}else{
-					rasterizebeforetag();
+					rasterizebeforetag(elemento);
 				}
 
 				analiseSelector();
@@ -133,26 +133,20 @@
 					{
 						this.atributos.seletor = String(getseletor);
 						analiseSelector();
+					}else{
+						this.atributos.seletor = false;
 					}
 					
-
-			}else{
-
-				if($(seletor).length == 1)
-				{
-					this.atributos.seletor = seletor;
-				}
-				
-				
 			}
 
 		  }
 
-		  function rasterizebeforetag(codeSeletor='')
+		  function rasterizebeforetag(elemento,codeSeletor='')
 		  {
 
-			if($(elemento).prop('tagName') =='BODY')
+			if(elemento.prop('tagName') =='BODY')
 			{
+				console.log(this.atributos);
 				this.atributos.seletor = 'BODY'+codeSeletor;
 			}
 
@@ -206,8 +200,6 @@
 				{
 					return rasterizebeforetag(elemento.parent(), " "+codeSeletor);
 				}
-				
-
 
 		  }
 
