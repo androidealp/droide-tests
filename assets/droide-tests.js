@@ -8,13 +8,11 @@
 
     	var $styleElement = "<style type='text/css'>";
     	$styleElement += "[droideclasshover]{border:2px solid #ff0000;}";
-    	$styleElement += ".droide-menu-clique{width: 200px; position:absolute;}";
-    	$styleElement += ".droide-menu-clique li{background-color: #eee;color: black;display: block;padding: 12px;text-decoration: none;}";
-    	$styleElement += ".droide-menu-clique li:hover{background-color: #ccc;cursor:pointer}";
-    	$styleElement += ".droide-menu-clique li:focus{background-color: #4CAF50;}";
-    	
+		$styleElement += ".modalDroide{display: none;position: fixed;z-index: 1;left: 0;top: 0;width: 100%;height: 100%;overflow: auto;background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4)}";
+		$styleElement += ".modalDroide .modal-content {background-color: #fefefe;margin: 15% auto;padding: 20px;border: 1px solid #888;width: 80%;}";
+		$styleElement += ".closeDroide {color: #aaa;float: right;font-size: 28px;font-weight: bold;}";
+		$styleElement += ".closeDroide:hover,.close:focus{ color: black;text-decoration: none;cursor: pointer;}";
     	$styleElement += "</style>";
-    	$styleElement += menu();
 
     	var ambient = $(this);
 
@@ -30,18 +28,11 @@
 				   
 				   var element = $(this);
 
-				   console.log("verificando elemento clicado....");
+				   modalDroide();
 
-				   verificandoElementoClicado(element)
+				  // verificandoElementoClicado(element)
 
-	      	 	// positions = positionMenu($(this).offset(), e, $(this).parent());
-
-				// $('#droide-menu-clique').css({'top':positions.x, 'left':positions.y});	      	 	
-
-	      	    // $('#droide-menu-clique').show('slow');
-
-	      		//console.log(positions);
-
+	      	 	
 	      	 }
 	      		
 
@@ -97,7 +88,36 @@
 
 				analiseSelector();
 				
-				console.log(this.atributos);
+				if(typeof this.atributos.seletor != 'undefined' &&  this.atributos.seletor)
+				{
+					analiseAction(elemento);
+					
+				}
+				
+		  }
+
+		  function analiseAction(elemento)
+		  {
+
+			informebutton = confirm("Este clique é um ajax?");
+
+			if(informebutton == true)
+			{
+				this.atributos.typelink = 'ajax';
+			}else{
+
+				informebutton = confirm("Este clique é um link para página interna?");
+
+				if(informebutton == true)
+				{
+					this.atributos.typelink = 'link';
+					this.atributos.urllink = elemento.attr('href');
+				}
+			}
+
+			console.log(this.atributos);
+			
+
 		  }
 
 		  function analiseSelector()
@@ -203,29 +223,28 @@
 
 		  }
 
-	      function menu()
+	      function modalDroide()
 	      {
-	      	var html = '<ul id="droide-menu-clique" droide="1" class="droide-menu-clique" style="display:none">';
-	      		html += '<li id="droide-link-interno" droide="1">link interno</li>';
-	      		html += '<li id="droide-link-externo" droide="1">link externo</li>';
-	      		html += '<li id="droide-ajax" droide="1">ajax</li>';
-	      		html += '<li id="droide-login" droide="1">login</li>';
-	      		html += '<li id="droide-formulario" droide="1">formulario</li>';
-	      		html += '</ul>';
 
-	      	return html;
+			var html = '<div id="modaldroide" class="modalDroide" droide ="true">';
+			    html += ' <div class="modal-content" droide ="true">';
+				html += '   <a href="#close" title="Close" class="closeDroide" droide ="true">X</a>';
+				html += '   <h2 droide ="true">Modal Box</h2>';
+				html += '   <p droide ="true">This is a sample modal box that can be created using the powers of CSS3.</p>';
+				html += '   <p droide ="true">You could do a lot of things here like have a pop-up ad that shows when your website loads, or create a login/register form for users.</p>';
+				html += ' </div>';
+				html += '</div>';
+
+			  $('body').append(html);
+
+			  
+			  modal = $('#modaldroide');
+
+			  modal.css({'display':'block'});
+			  
 	      } 
 
-	      function positionMenu(offset, e, wrapper)
-	      {
-	      	
-	      	var parentOffset = offset; 
-   			var relX = e.pageX - parentOffset.left + wrapper.scrollLeft();
-   			var relY = e.pageY - parentOffset.top  + wrapper.scrollTop();
-
-   			return {x:relX, y:relY}
-
-	      }
+	      
 
     };
  
