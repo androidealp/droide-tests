@@ -2,7 +2,9 @@
 
     $.fn.DroideTests = function() {
 
-		atributos = {seletor:''};
+		$.fn.DroideTests.atributos = {seletor:'',seletoraction:'',tipolink:'',textoaction:''};
+
+		$.fn.DroideTests.jsonRobo = [];
 		
     	var $css = 'position:absolute; bottom:0; left:0; width:100%;background:rgba(169, 68, 66,0.5); color:#fff;';
 
@@ -28,9 +30,9 @@
 				   
 				   var element = $(this);
 
-				   modalDroide();
+				   
 
-				  // verificandoElementoClicado(element)
+				  verificandoElementoClicado(element)
 
 	      	 	
 	      	 }
@@ -71,7 +73,42 @@
 	      		
 
 	      		//console.log($(this));
-	      }); 
+		  }); 
+		  
+		  $(document).on('click','[data-testdroidelink]',function(e){
+			  e.preventDefault();
+				var bt = $(this);
+				var form = $(bt.data('testdroidelink'));
+				var linkelemento = bt.data('linkelemento'); // verifica a necessidade
+				var campos = form.find('input');
+
+				$.each(campos,function(i,e){
+					if($(this).attr('name') == 'tipolink' && $(this).is(':checked'))
+					{
+						$.fn.DroideTests.atributos.tipolink = $(this).val();
+						
+					}
+
+					if($(this).attr('name') == 'seletor' && $(this).val() != '')
+					{
+						$.fn.DroideTests.atributos.seletoraction = $(this).val();
+					}
+
+					if($(this).attr('name') == 'texto' && $(this).val() != '')
+					{
+						$.fn.DroideTests.atributos.textoaction = $(this).val();
+					}
+					
+				});
+
+				$.fn.DroideTests.jsonRobo.push($.fn.DroideTests.atributos);
+				$.fn.DroideTests.atributos = {};
+
+				console.log($.fn.DroideTests.jsonRobo);
+
+				$('#modaldroide').remove();
+
+		  });
 
 		
 		  function verificandoElementoClicado(elemento)
@@ -81,65 +118,43 @@
 				if(typeof elemento.attr('id') != 'undefined')
 				{
 				
-					this.atributos.seletor = '#'+elemento.attr('id');
+					$.fn.DroideTests.atributos.seletor = '#'+elemento.attr('id');
 				}else{
-					rasterizebeforetag(elemento);
+					$.fn.DroideTests.rasterizebeforetag(elemento);
 				}
 
-				analiseSelector();
+				$.fn.DroideTests.analiseSelector();
 				
-				if(typeof this.atributos.seletor != 'undefined' &&  this.atributos.seletor)
+				if(typeof $.fn.DroideTests.atributos.seletor != 'undefined' &&  $.fn.DroideTests.atributos.seletor)
 				{
-					analiseAction(elemento);
+					$.fn.DroideTests.modalDroide(elemento);
 					
 				}
 				
 		  }
 
-		  function analiseAction(elemento)
-		  {
+		 
 
-			informebutton = confirm("Este clique é um ajax?");
-
-			if(informebutton == true)
-			{
-				this.atributos.typelink = 'ajax';
-			}else{
-
-				informebutton = confirm("Este clique é um link para página interna?");
-
-				if(informebutton == true)
-				{
-					this.atributos.typelink = 'link';
-					this.atributos.urllink = elemento.attr('href');
-				}
-			}
-
-			console.log(this.atributos);
-			
-
-		  }
-
-		  function analiseSelector()
+		  $.fn.DroideTests.analiseSelector = function()
 		  {
 			var patt = new RegExp(":eq\(\d{1,10000}\)",'g');
 
-			if(patt.test(this.atributos.seletor ))
+			if(patt.test($.fn.DroideTests.atributos.seletor ))
 			{
 				console.log('agora entrou o regex');
 
 				var repseletor = str.replace(patt, "");
-				var getEQ = patt.exec(this.atributos.seletor );
-				this.atributos.seletor = repseletor;
-				this.atributos.eq = getEQ;
+				var getEQ = patt.exec($.fn.DroideTests.atributos.seletor );
+				$.fn.DroideTests.atributos.seletor = repseletor;
+				$.fn.DroideTests.atributos.eq = getEQ;
 
 				return ;
 			}
 
-			if($(this.atributos.seletor ).length != 1)
+			if($($.fn.DroideTests.atributos.seletor ).length != 1)
 			{
 				itens = [];
-				$.each($(this.atributos.seletor ), function(i,e){
+				$.each($($.fn.DroideTests.atributos.seletor ), function(i,e){
 					if($(this).text() != '')
 					{
 						itens.push('index ['+i+'] valor = '+$(this).text());
@@ -148,26 +163,26 @@
 					}
 				});
 
-				var getseletor = prompt("O seletor não é unico, ou não foi encontrado, mude para uma construção unica. caso não seja possível unificar o seletor use :eq(index). Encontrado:\n"+itens.join('\n'), this.atributos.seletor );
+				var getseletor = prompt("O seletor não é unico, ou não foi encontrado, mude para uma construção unica. caso não seja possível unificar o seletor use :eq(index). Encontrado:\n"+itens.join('\n'), $.fn.DroideTests.atributos.seletor );
 					if(getseletor != null)
 					{
-						this.atributos.seletor = String(getseletor);
-						analiseSelector();
+						$.fn.DroideTests.atributos.seletor = String(getseletor);
+						$.fn.DroideTests.analiseSelector();
 					}else{
-						this.atributos.seletor = false;
+						$.fn.DroideTests.atributos.seletor = false;
 					}
 					
 			}
 
 		  }
 
-		  function rasterizebeforetag(elemento,codeSeletor='')
+		  $.fn.DroideTests.rasterizebeforetag = function(elemento,codeSeletor='')
 		  {
 
 			if(elemento.prop('tagName') =='BODY')
 			{
-				console.log(this.atributos);
-				this.atributos.seletor = 'BODY'+codeSeletor;
+				console.log($.fn.DroideTests.atributos);
+				$.fn.DroideTests.atributos.seletor = 'BODY'+codeSeletor;
 			}
 
 			if(typeof elemento.attr('class') != 'undefined')
@@ -184,7 +199,7 @@
 						return '.'+firstClass+codeSeletor;
 					}else{
 						codeSeletor = '.'+firstClass+codeSeletor;
-						return rasterizebeforetag(elemento.parent(), " "+codeSeletor);
+						return $.fn.DroideTests.rasterizebeforetag(elemento.parent(), " "+codeSeletor);
 					}
 
 					
@@ -204,7 +219,7 @@
 						return elemento.prop("tagName")+codeSeletor;
 					}else{
 						codeSeletor = elemento.prop("tagName")+codeSeletor;
-						return rasterizebeforetag(elemento.parent(), " "+codeSeletor);
+						return $.fn.DroideTests.rasterizebeforetag(elemento.parent(), " "+codeSeletor);
 					}
 
 					
@@ -218,20 +233,22 @@
 
 				if(typeof elemento.parent() == "object" && elemento.parent().length == 1)
 				{
-					return rasterizebeforetag(elemento.parent(), " "+codeSeletor);
+					return $.fn.DroideTests.rasterizebeforetag(elemento.parent(), " "+codeSeletor);
 				}
 
 		  }
 
-	      function modalDroide()
+		  $.fn.DroideTests.modalDroide = function(elemento)
 	      {
 
 			var html = '<div id="modaldroide" class="modalDroide" droide ="true">';
-			    html += ' <div class="modal-content" droide ="true">';
-				html += '   <a href="#close" title="Close" class="closeDroide" droide ="true">X</a>';
-				html += '   <h2 droide ="true">Modal Box</h2>';
-				html += '   <p droide ="true">This is a sample modal box that can be created using the powers of CSS3.</p>';
-				html += '   <p droide ="true">You could do a lot of things here like have a pop-up ad that shows when your website loads, or create a login/register form for users.</p>';
+			    html += ' <div id="formmodaldroide" class="modal-content" droide ="true">';
+				html += '   <a href="#close" title="Close" class="closeDroide" droide="true">X</a>';
+				html += '   <h2 droide ="true">Proriedades do link</h2>';
+				html += '   <p droide ="true">Este clique é <input type="radio" droide="true" value="ajax" name="tipolink" /> Ajax, <input name="tipolink" type="radio" droide="true" value="link" /> link,<input name="tipolink" type="radio" droide="true" value="link" /> formulário</p>';
+				html += '   <p droide ="true" style="display:none">link para verificar: '+elemento.attr('href')+'</p>';
+				html += '   <div droide ="true"><input droide ="true" name="seletor" type="text" placeholder="Informe o seletor do retorno da ação" /> <input type="text" name="texto" droide ="true" placeholder="Informe o texto de retorno dentro da ação" /></div>';
+				html += '   <div droide="true" data-testdroidelink="#modaldroide"><a href="#">Aplicar</a></div>';
 				html += ' </div>';
 				html += '</div>';
 
