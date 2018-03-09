@@ -248,7 +248,7 @@
 				html += '   <p droide ="true">Este clique é <input type="radio" droide="true" value="ajax" name="tipolink" /> Ajax, <input name="tipolink" type="radio" droide="true" value="link" /> link,<input name="tipolink" type="radio" droide="true" value="link" /> formulário</p>';
 				html += '   <p droide ="true" style="display:none">link para verificar: '+elemento.attr('href')+'</p>';
 				html += '   <div droide ="true"><input droide ="true" name="seletor" type="text" placeholder="Informe o seletor do retorno da ação" /> <input type="text" name="texto" droide ="true" placeholder="Informe o texto de retorno dentro da ação" /></div>';
-				html += '   <div droide="true" data-testdroidelink="#modaldroide"><a href="#">Aplicar</a></div>';
+				html += '   <div droide="true" data-testdroidelink="#modaldroide"><a droide="true" href="#">Aplicar</a></div>';
 				html += ' </div>';
 				html += '</div>';
 
